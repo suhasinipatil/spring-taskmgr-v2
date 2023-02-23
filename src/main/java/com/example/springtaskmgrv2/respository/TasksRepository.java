@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TasksRepository extends JpaRepository<TaskEntity, Integer> {
@@ -19,4 +20,17 @@ public interface TasksRepository extends JpaRepository<TaskEntity, Integer> {
     List<TaskEntity> findAllOverdue();
 
     List<TaskEntity> findAllByTitleContainingIgnoreCase(String titleFragment);
+
+    TaskEntity save(TaskEntity task);
+
+    List<TaskEntity> findAll();
+
+    @Override
+    Optional<TaskEntity> findById(Integer integer);
+
+    @Override
+    void deleteById(Integer integer);
+
+    List<TaskEntity> findTaskEntitiesByTitle(String title);
+
 }
