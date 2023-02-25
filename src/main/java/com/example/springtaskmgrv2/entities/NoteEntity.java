@@ -13,6 +13,9 @@ public class NoteEntity extends BaseEntity{
     @Column(name = "body", nullable = false, length = 500)
     String body;
 
+    @Column(name ="title", nullable = false, length = 150)
+    String title;
+
     @ManyToOne
     TaskEntity task;
 }

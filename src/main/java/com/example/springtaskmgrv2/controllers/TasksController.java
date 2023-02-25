@@ -33,9 +33,9 @@ public class TasksController {
     }
 
     @PostMapping("")
-    public ResponseEntity<TaskEntity> createTask(TaskEntity task) throws URISyntaxException {
+    public ResponseEntity<TaskEntity> createTask(@RequestBody TaskEntity task) throws URISyntaxException {
         var createdTask = tasksService.createTask(task);
-        return ResponseEntity.created(new URI("/tasks" + createdTask.getId())).body(createdTask);
+        return ResponseEntity.created(new URI("/tasks/" + createdTask.getId())).body(createdTask);
     }
 
     @PatchMapping("/{id}")

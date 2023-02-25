@@ -25,4 +25,5 @@ public interface NotesRepository extends JpaRepository<NoteEntity, Integer> {
    List<NoteEntity> findByTaskId(Integer id);
 
    void deleteByIdAndTaskId(Integer noteId, Integer taskId);
+
 }

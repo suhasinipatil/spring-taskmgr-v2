@@ -27,8 +27,8 @@ public class NotesController {
     }
 
     @PostMapping("")
-    public ResponseEntity<NoteEntity> createNoteForGivenTaskId(@PathVariable Integer taskId) throws URISyntaxException {
-        var createdNote = notesService.createNoteByTaskId(taskId);
+    public ResponseEntity<NoteEntity> createNoteForGivenTaskId(@PathVariable Integer taskId, @RequestBody NoteEntity note) throws URISyntaxException {
+        var createdNote = notesService.createNoteByTaskId(taskId, note.getTitle(), note.getTitle());
         return ResponseEntity.created(new URI("/tasks/" + taskId + "/notes/"+ createdNote.getId())).body(createdNote);
     }
 

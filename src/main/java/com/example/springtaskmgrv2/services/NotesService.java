@@ -37,11 +37,12 @@ public class NotesService {
         throw new NoteNotFoundException(nodeId);
     }
 
-    public NoteEntity createNoteByTaskId(Integer taskId){
+    public NoteEntity createNoteByTaskId(Integer taskId, String title, String body){
         Optional<TaskEntity> tasks = tasksRepository.findById(taskId);
         if(tasks.isPresent()){
             NoteEntity note = new NoteEntity();
-            note.setBody("");
+            note.setTitle(title);
+            note.setBody(body);
             note.setTask(tasks.get());
             return notesRepository.save(note);
         }
@@ -49,9 +50,24 @@ public class NotesService {
     }
 
     public NoteEntity deleteNoteByIdAndTaskId(Integer noteId, Integer taskId){
-        NoteEntity note = getNoteByID(noteId);
-        notesRepository.deleteByIdAndTaskId(noteId, taskId);
-        return note;
+        List<NoteEntity> notes = notesRepository.findByTaskId(taskId);
+        if(notes.size() == 1) {
+            NoteEntity note = getNoteByID(noteId);
+            notesRepository.deleteById(noteId);
+            tasksRepository.deleteById(taskId);
+            return note;
+        }else if(notes.size() > 1){
+            Optional<NoteEntity> noteToBeDeleted = notesRepository.findById(noteId);
+            if(noteToBeDeleted.isPresent()){
+                NoteEntity tempNote = noteToBeDeleted.get();
+                tempNote.setTask(null);
+                notesRepository.save(tempNote);
+                notesRepository.deleteById(noteId);
+                return noteToBeDeleted.get();
+            }
+            throw new NoteNotFoundException(noteId);
+        }
+        throw new TasksService.TaskNotFoundException(taskId);
     }
 
     public List<NoteEntity> getNotesByTaskId(Integer taskId){

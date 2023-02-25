@@ -32,6 +32,7 @@ public class NotesServiceTests {
         TaskEntity task = getInCompletedTaskObject();
         var savedTask = tasksRepository.save(task);
         NoteEntity note = new NoteEntity();
+        note.setTitle("First title");
         note.setBody("First note");
         note.setTask(task);
         var savedNote = notesService.createNote(note);
@@ -39,16 +40,37 @@ public class NotesServiceTests {
     }
 
     @Test
-    public void testDeleteNoteByIdAndTaskId(){
+    public void testDeleteNoteByIdAndTaskIdScenario1(){
         NotesService notesService = new NotesService(notesRepository, tasksRepository);
         TaskEntity task = getInCompletedTaskObject();
         var savedTask = tasksRepository.save(task);
         NoteEntity note = new NoteEntity();
         note.setBody("First note");
         note.setTask(task);
+        note.setTitle("First title");
         notesRepository.save(note);
         var deletedNote = notesService.deleteNoteByIdAndTaskId(note.getId(), task.getId());
         assertNotNull(deletedNote);
+    }
+
+    @Test
+    public void testDeleteNoteByIdAndTaskIdScenario2(){
+        NotesService notesService = new NotesService(notesRepository, tasksRepository);
+        TaskEntity task = getInCompletedTaskObject();
+        var savedTask = tasksRepository.save(task);
+        NoteEntity note1 = new NoteEntity();
+        note1.setBody("First note");
+        note1.setTask(task);
+        note1.setTitle("First title");
+        notesRepository.save(note1);
+        NoteEntity note2 = new NoteEntity();
+        note2.setBody("First note");
+        note2.setTask(task);
+        note2.setTitle("First title");
+        notesRepository.save(note2);
+        var deletedNote = notesService.deleteNoteByIdAndTaskId(note1.getId(), task.getId());
+        assertNotNull(deletedNote);
+        assertNull(deletedNote.getTask());
     }
 
     @Test
@@ -56,7 +78,7 @@ public class NotesServiceTests {
         NotesService notesService = new NotesService(notesRepository, tasksRepository);
         TaskEntity task = getInCompletedTaskObject();
         var savedTask = tasksRepository.save(task);
-        var createdNote = notesService.createNoteByTaskId(savedTask.getId());
+        var createdNote = notesService.createNoteByTaskId(savedTask.getId(), "title", "body");
         assertNotNull(createdNote);
         assertEquals(task, createdNote.getTask());
     }
@@ -66,7 +88,7 @@ public class NotesServiceTests {
         NotesService notesService = new NotesService(notesRepository, tasksRepository);
         assertThrowsExactly(NotesService.NoteNotFoundException.class, () -> notesService.deleteNoteByIdAndTaskId(300, 200), "Note with id 300 is not found");
         assertThrowsExactly(NotesService.NoteNotFoundException.class, () -> notesService.getNoteByID(200), "Note with id 200 is not found");
-        assertThrowsExactly(TasksService.TaskNotFoundException.class, () -> notesService.createNoteByTaskId(200), "Task with id 200 is not found");
+        assertThrowsExactly(TasksService.TaskNotFoundException.class, () -> notesService.createNoteByTaskId(200, "title", "body"), "Task with id 200 is not found");
     }
 
     @Test
@@ -75,6 +97,7 @@ public class NotesServiceTests {
         TaskEntity task = getInCompletedTaskObject();
         var savedTask = tasksRepository.save(task);
         NoteEntity note = new NoteEntity();
+        note.setTitle("First title");
         note.setBody("First note");
         note.setTask(task);
         notesRepository.save(note);
